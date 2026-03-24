@@ -10,8 +10,19 @@ const formCreateNom = document.getElementById("formCreateNom")
 const formCreateDateDebut = document.getElementById("formCreateDateDebut")
 const formCreateDateFin = document.getElementById("formCreateDateFin")
 
+let cardList = JSON.parse(localStorage.getItem("cards")) || [];
+
+let editMode = null;
+
+cardList.forEach(function (card) {
+    createPostit(postit.titre, postit.texte, postit.colonne);
+});
+
 buttonFormationCreate.addEventListener("click", () => {
+
     popupFormationCreate.style.display = "block";
+    formCreateNom.focus();
+    buttonCreateFormation.textContent = "Créer"
 })
 
 buttonClosePopup.addEventListener("click", () => {
@@ -20,8 +31,26 @@ buttonClosePopup.addEventListener("click", () => {
 
 formFormationCreate.addEventListener("submit", (e) => {
     e.preventDefault();
-    createFormationCard();
-    popupFormationCreate.style.display = "none";
+    if (editMode === null) {
+        createFormationCard();
+        popupFormationCreate.style.display = "none";
+        formFormationCreate.reset();
+    } else if (editMode !== null) {
+
+        const cardNameElement = editMode.querySelector(".card-name");
+        const cardStartDateElement = editMode.querySelector(".card-start-date");
+        const cardEndDateElement = editMode.querySelector(".card-end-date");
+
+        cardNameElement.textContent = formCreateNom.value;
+        cardStartDateElement.textContent = formatDateFR(formCreateDateDebut.value);
+        cardEndDateElement.textContent = formatDateFR(formCreateDateFin.value);
+
+        popupFormationCreate.style.display = "none";
+        formFormationCreate.reset();
+
+        editMode = null;
+    }
+
 });
 
 function formatDateFR(dateString) {
@@ -29,12 +58,28 @@ function formatDateFR(dateString) {
     return date.toLocaleDateString("fr-FR");
 }
 
+let cardID = 0;
+
 function createFormationCard() {
+
+    cardID++
+
     const card = document.createElement("div");
+
+    card.id = cardID;
+
+    let cardName = formCreateNom.value
+    let cardStartDate = formCreateDateDebut.value
+    let cardEndDate = formCreateDateFin.value
+
+    card.name = cardName;
+    card.startDate = cardStartDate;
+    card.endDate = cardEndDate;
+
     card.innerHTML = `
-    <p>${formCreateNom.value}</p>
-    <p>${formatDateFR(formCreateDateDebut.value)}</p>
-    <p>${formatDateFR(formCreateDateFin.value)}</p>
+    <p class=card-name>${formCreateNom.value}</p>
+    <p class=card-start-date>${formatDateFR(formCreateDateDebut.value)}</p>
+    <p class=card-end-date>${formatDateFR(formCreateDateFin.value)}</p>
 
     <div class="card-buttons">
         <button class="btn-view" type="button" aria-label="Voir">
@@ -59,6 +104,38 @@ function createFormationCard() {
         </button>
     </div>
     `
+
+    const buttonDeleteCard = card.querySelector(".btn-delete");
+
+    buttonDeleteCard.addEventListener("click", () => {
+        if (confirm("Voulez-vous vraiment supprimer cette formation ?")) {
+            card.remove();
+            localStorage.setItem("cards", JSON.stringify(cardList));
+        }
+    })
+
+    const buttonModifyCard = card.querySelector(".btn-edit")
+
+    buttonModifyCard.addEventListener("click", () => {
+        buttonCreateFormation.textContent = "Modifier"
+        popupFormationCreate.style.display = "block";
+        formCreateNom.focus();
+
+        editMode = card;
+
+        formCreateNom.value = card.name
+        formCreateDateDebut.value = card.startDate
+        formCreateDateFin.value = card.endDate
+
+        localStorage.setItem("cards", JSON.stringify(cardList));
+
+    })
+
     formationCard.appendChild(card);
+
+
+
+    localStorage.setItem("cards", JSON.stringify(cardList));
     return card;
 }
+
