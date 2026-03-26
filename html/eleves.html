@@ -1,34 +1,69 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="stylesheet" href="../css/css.css">
-    <title>Projet 1</title>
+    <link rel="icon" href="data:,">
+    <title>BaloLudo - Eleves Formation</title>
 </head>
 
-<body>
-    <h1>Élèves de la formation</h1>
-    <h2 id="titreFormation"></h2>
+<body class="page-eleves">
+    <header class="topbar">
+        <div class="brand">
+            <img src="../img/Logo.png" alt="Logo BaloLudo">
+            <div class="brand-copy">
+                <strong>BaloLudo</strong>
+                <span>Vote en ligne pour ludo</span>
+            </div>
+        </div>
+
+        <h1 class="page-title">Eleves Formation</h1>
+
+        <a class="topbar-button" href="./index.html">Retour a l'accueil</a>
+    </header>
+
+    <main class="page-main">
+        <div class="formation-heading">
+            <span id="titreFormationLabel" class="formation-heading-label">Formation</span>
+            <span id="titreFormation"></span>
+            <a class="board-link" href="./formations.html">Retour aux formations</a>
+        </div>
+
+        <section class="app-board">
+            <div class="board-surface">
+                <div id="eleve-directory" aria-live="polite"></div>
+            </div>
+        </section>
+    </main>
 
     <div id="popupEleveCreate" class="popup">
         <div class="popup-content">
-            <span id="closePopupEleve">&times;</span>
-            <h2>Ajouter un élève</h2>
+            <button id="closePopupEleve" class="popup-close" type="button" aria-label="Fermer">&times;</button>
+            <h2>Ajouter un eleve</h2>
+
             <form id="formEleveCreate">
-                <input id="formEleveNom" type="text" placeholder="Nom" required>
-                <input id="formElevePrenom" type="text" placeholder="Prénom" required>
-                <input id="formEleveEmail" type="email" placeholder="Email" required>
-                <button id="buttonCreateEleve" type="submit">Créer</button>
+                <label class="form-field" for="formEleveNom">
+                    <span>Nom</span>
+                    <input id="formEleveNom" type="text" required>
+                </label>
+
+                <label class="form-field" for="formElevePrenom">
+                    <span>Prenom</span>
+                    <input id="formElevePrenom" type="text" required>
+                </label>
+
+                <label class="form-field" for="formEleveEmail">
+                    <span>Email</span>
+                    <input id="formEleveEmail" type="email" required>
+                </label>
+
+                <button id="buttonCreateEleve" class="popup-submit" type="submit">Creer</button>
             </form>
         </div>
     </div>
-
-
-    <div id="eleve-directory"></div>
 
     <script src="../javascript/js2.js"></script>
 </body>

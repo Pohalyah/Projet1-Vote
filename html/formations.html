@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/css.css">
+    <link rel="icon" href="data:,">
+    <title>BaloLudo - Mes Formations</title>
+</head>
+
+<body class="page-formations">
+    <header class="topbar">
+        <div class="brand">
+            <img src="../img/Logo.png" alt="Logo BaloLudo">
+            <div class="brand-copy">
+                <strong>BaloLudo</strong>
+                <span>Vote en ligne pour ludo</span>
+            </div>
+        </div>
+
+        <h1 class="page-title">Mes Formations</h1>
+
+        <a class="topbar-button" href="./index.html">Retour a l'accueil</a>
+    </header>
+
+    <main class="page-main">
+        <section class="app-board">
+            <div class="board-surface board-surface-formations">
+                <div class="formations-layout">
+                    <div id="formation-directory" aria-live="polite">
+                        <button id="formationCreate" type="button" aria-label="Creer une formation">
+                            <span class="card-name">Ajout d'une formation</span>
+                            <span class="add-icon" aria-hidden="true">+</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="popupFormationCreate" class="popup">
+        <div class="popup-content">
+            <button id="closePopup" class="popup-close" type="button" aria-label="Fermer">&times;</button>
+            <h2>Creer une formation</h2>
+
+            <form id="formFormationCreate">
+                <label class="form-field" for="formCreateNom">
+                    <span>Nom de la formation</span>
+                    <input id="formCreateNom" type="text" required>
+                </label>
+
+                <label class="form-field" for="formCreateDateDebut">
+                    <span>Date de debut</span>
+                    <input id="formCreateDateDebut" type="date" required>
+                </label>
+
+                <label class="form-field" for="formCreateDateFin">
+                    <span>Date de fin</span>
+                    <input id="formCreateDateFin" type="date" required>
+                </label>
+
+                <button id="buttonCreateFormation" class="popup-submit" type="submit">Creer</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="popupVoteCreate" class="popup">
+        <div class="popup-content popup-content-vote">
+            <button id="closePopupVote" class="popup-close" type="button" aria-label="Fermer">&times;</button>
+            <h2>Creer un vote</h2>
+            <p id="voteFormationName" class="vote-popup-meta"></p>
+
+            <form id="formVoteCreate">
+                <label class="form-field" for="formVoteDateOuverture">
+                    <span>Date d'ouverture</span>
+                    <input id="formVoteDateOuverture" type="date" required>
+                </label>
+
+                <label class="form-field" for="formVoteHeureOuverture">
+                    <span>Heure d'ouverture</span>
+                    <input id="formVoteHeureOuverture" type="time" required>
+                </label>
+
+                <label class="form-field" for="formVoteDateFin">
+                    <span>Date de fin</span>
+                    <input id="formVoteDateFin" type="date" required>
+                </label>
+
+                <fieldset class="vote-presents">
+                    <legend>Eleves presentes</legend>
+                    <p class="form-help">Selectionne au moins 2 eleves presents pour ce vote.</p>
+                    <div id="votePresentsList" class="vote-presents-list"></div>
+                </fieldset>
+
+                <button id="buttonCreateVote" class="popup-submit" type="submit">Creer le vote</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../javascript/js.js"></script>
+</body>
+
+</html>

@@ -5,6 +5,7 @@ const formations = JSON.parse(localStorage.getItem("formations")) || [];
 const formation = formations.find(f => String(f.id) === String(idFormation));
 
 const titre = document.getElementById("titreFormation");
+const titreLabel = document.getElementById("titreFormationLabel");
 const eleveDirectory = document.getElementById("eleve-directory");
 
 const popupEleveCreate = document.getElementById("popupEleveCreate");
@@ -19,6 +20,10 @@ let editEleveId = null;
 const buttonCreateEleve = document.getElementById("buttonCreateEleve");
 
 if (!formation) {
+    if (titreLabel) {
+        titreLabel.hidden = true;
+    }
+
     titre.textContent = "Formation introuvable";
 } else {
     formation.eleves = Array.isArray(formation.eleves) ? formation.eleves : [];
@@ -26,11 +31,31 @@ if (!formation) {
 
     localStorage.setItem("formations", JSON.stringify(formations));
 
+    if (titreLabel) {
+        titreLabel.hidden = false;
+    }
+
     titre.textContent = formation.nom;
     renderEleves();
 }
 
 closePopupEleve.addEventListener("click", () => {
+    closeElevePopup();
+});
+
+popupEleveCreate.addEventListener("click", (e) => {
+    if (e.target !== popupEleveCreate) {
+        return;
+    }
+
+    closeElevePopup();
+});
+
+document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape" || popupEleveCreate.style.display !== "block") {
+        return;
+    }
+
     closeElevePopup();
 });
 
@@ -114,8 +139,18 @@ function createEleveCard(eleve) {
 
     card.innerHTML = `
         <div class="eleve-card-actions">
-            <button class="btn-edit-eleve" type="button" aria-label="Modifier l'élève">✎</button>
-            <button class="btn-delete-eleve" type="button" aria-label="Supprimer l'élève">&times;</button>
+            <button class="btn-edit-eleve" type="button" aria-label="Modifier l'élève">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 21h4l11-11-4-4L3 17v4Z"></path>
+                    <path d="M14 6l4 4"></path>
+                </svg>
+            </button>
+            <button class="btn-delete-eleve" type="button" aria-label="Supprimer l'élève">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 6l12 12"></path>
+                    <path d="M18 6L6 18"></path>
+                </svg>
+            </button>
         </div>
         <p class="card-name">${eleve.nom}</p>
         <p class="card-firstname">${eleve.prenom}</p>
