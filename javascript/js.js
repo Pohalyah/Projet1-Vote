@@ -1,20 +1,21 @@
-const formationCard = document.getElementById("formation-directory");
+const formationDirectory = document.getElementById("formation-directory");
 
 const buttonFormationCreate = document.getElementById("formationCreate");
 const popupFormationCreate = document.getElementById("popupFormationCreate");
 const buttonClosePopup = document.getElementById("closePopup");
 const formFormationCreate = document.getElementById("formFormationCreate");
 const buttonCreateFormation = document.getElementById("buttonCreateFormation");
+
 const popupVoteCreate = document.getElementById("popupVoteCreate");
 const closePopupVote = document.getElementById("closePopupVote");
 const formVoteCreate = document.getElementById("formVoteCreate");
 const voteFormationName = document.getElementById("voteFormationName");
 const votePresentsList = document.getElementById("votePresentsList");
-const buttonCreateVote = document.getElementById("buttonCreateVote");
 
 const formCreateNom = document.getElementById("formCreateNom");
 const formCreateDateDebut = document.getElementById("formCreateDateDebut");
 const formCreateDateFin = document.getElementById("formCreateDateFin");
+
 const formVoteDateOuverture = document.getElementById("formVoteDateOuverture");
 const formVoteHeureOuverture = document.getElementById("formVoteHeureOuverture");
 const formVoteDateFin = document.getElementById("formVoteDateFin");
@@ -22,142 +23,111 @@ const formVoteDateFin = document.getElementById("formVoteDateFin");
 const savedFormations = JSON.parse(localStorage.getItem("formations"));
 const savedCards = JSON.parse(localStorage.getItem("cards")) || [];
 
-let cardList = savedFormations || savedCards || [];
-
-cardList = cardList.map(function (formation) {
-    return {
-        ...formation,
-        eleves: Array.isArray(formation.eleves) ? formation.eleves : [],
-        votes: Array.isArray(formation.votes) ? formation.votes : []
-    };
-});
-
-localStorage.setItem("formations", JSON.stringify(cardList));
-
-let editMode = null;
+let cardList = (savedFormations || savedCards || []).map(normalizeFormation);
+let editFormationId = null;
 let voteFormationId = null;
-let cardID = cardList.length > 0 ? Math.max(...cardList.map(c => Number(c.id))) : 0;
+let cardID =
+    cardList.length > 0
+        ? Math.max(...cardList.map((formation) => Number(formation.id) || 0))
+        : 0;
 
-cardList.forEach(function (c) {
-    createFormationCard(c.id, c.nom, c.dateDebut, c.dateFin);
-});
+saveFormations();
+renderFormationCards();
 
 buttonFormationCreate.addEventListener("click", () => {
+    editFormationId = null;
+    buttonCreateFormation.textContent = "Creer";
+    formFormationCreate.reset();
     popupFormationCreate.style.display = "block";
     formCreateNom.focus();
-    buttonCreateFormation.textContent = "Créer";
-    editMode = null;
-    formFormationCreate.reset();
 });
 
 buttonClosePopup.addEventListener("click", () => {
-    popupFormationCreate.style.display = "none";
-    formFormationCreate.reset();
-    buttonCreateFormation.textContent = "Créer";
-    editMode = null;
+    closeFormationPopup();
 });
 
-popupFormationCreate.addEventListener("click", (e) => {
-    if (e.target !== popupFormationCreate) {
-        return;
+popupFormationCreate.addEventListener("click", (event) => {
+    if (event.target === popupFormationCreate) {
+        closeFormationPopup();
     }
-
-    popupFormationCreate.style.display = "none";
-    formFormationCreate.reset();
-    buttonCreateFormation.textContent = "Créer";
-    editMode = null;
-});
-
-document.addEventListener("keydown", (e) => {
-    if (e.key !== "Escape" || popupFormationCreate.style.display !== "block") {
-        return;
-    }
-
-    popupFormationCreate.style.display = "none";
-    formFormationCreate.reset();
-    buttonCreateFormation.textContent = "Créer";
-    editMode = null;
 });
 
 closePopupVote.addEventListener("click", () => {
     closeVotePopup();
 });
 
-popupVoteCreate.addEventListener("click", (e) => {
-    if (e.target !== popupVoteCreate) {
+popupVoteCreate.addEventListener("click", (event) => {
+    if (event.target === popupVoteCreate) {
+        closeVotePopup();
+    }
+});
+
+document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") {
         return;
     }
 
-    closeVotePopup();
+    if (popupVoteCreate.style.display === "block") {
+        closeVotePopup();
+    }
+
+    if (popupFormationCreate.style.display === "block") {
+        closeFormationPopup();
+    }
 });
 
-document.addEventListener("keydown", (e) => {
-    if (e.key !== "Escape" || popupVoteCreate.style.display !== "block") {
+formFormationCreate.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const nom = formCreateNom.value.trim();
+    const dateDebut = formCreateDateDebut.value;
+    const dateFin = formCreateDateFin.value;
+
+    if (dateFin < dateDebut) {
+        alert("La date de fin doit etre posterieure ou egale a la date de debut.");
         return;
     }
 
-    closeVotePopup();
-});
+    if (editFormationId === null) {
+        cardID += 1;
 
-formFormationCreate.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    if (editMode === null) {
-        cardID++;
-
-        const cardObject = {
-            id: cardID,
-            nom: formCreateNom.value,
-            dateDebut: formCreateDateDebut.value,
-            dateFin: formCreateDateFin.value,
-            eleves: [],
-            votes: []
-        };
-
-        cardList.push(cardObject);
-        saveFormations();
-
-        createFormationCard(
-            cardObject.id,
-            cardObject.nom,
-            cardObject.dateDebut,
-            cardObject.dateFin
+        cardList.push(
+            normalizeFormation({
+                id: cardID,
+                nom: nom,
+                dateDebut: dateDebut,
+                dateFin: dateFin,
+                eleves: [],
+                votes: []
+            })
         );
     } else {
-        const cardNameElement = editMode.querySelector(".card-name");
-        const cardStartDateElement = editMode.querySelector(".card-start-date");
-        const cardEndDateElement = editMode.querySelector(".card-end-date");
+        const formation = cardList.find(
+            (item) => Number(item.id) === Number(editFormationId)
+        );
 
-        cardNameElement.textContent = formCreateNom.value;
-        cardStartDateElement.textContent = formatDateFR(formCreateDateDebut.value);
-        cardEndDateElement.textContent = formatDateFR(formCreateDateFin.value);
+        if (!formation) {
+            alert("Formation introuvable.");
+            closeFormationPopup();
+            return;
+        }
 
-        editMode.name = formCreateNom.value;
-        editMode.startDate = formCreateDateDebut.value;
-        editMode.endDate = formCreateDateFin.value;
-        applyFormationCardStatus(editMode, formCreateDateDebut.value, formCreateDateFin.value);
-
-        cardList.forEach(function (c) {
-            if (c.id === Number(editMode.id)) {
-                c.nom = formCreateNom.value;
-                c.dateDebut = formCreateDateDebut.value;
-                c.dateFin = formCreateDateFin.value;
-            }
-        });
-
-        saveFormations();
+        formation.nom = nom;
+        formation.dateDebut = dateDebut;
+        formation.dateFin = dateFin;
     }
 
-    popupFormationCreate.style.display = "none";
-    formFormationCreate.reset();
-    buttonCreateFormation.textContent = "Créer";
-    editMode = null;
+    saveFormations();
+    renderFormationCards();
+    closeFormationPopup();
 });
 
-formVoteCreate.addEventListener("submit", (e) => {
-    e.preventDefault();
+formVoteCreate.addEventListener("submit", (event) => {
+    event.preventDefault();
 
-    const formation = cardList.find((item) => String(item.id) === String(voteFormationId));
+    const formation = cardList.find(
+        (item) => String(item.id) === String(voteFormationId)
+    );
 
     if (!formation) {
         alert("Formation introuvable.");
@@ -184,33 +154,101 @@ formVoteCreate.addEventListener("submit", (e) => {
 
     formation.votes = Array.isArray(formation.votes) ? formation.votes : [];
 
-    const vote = {
-        id: getNextVoteId(formation),
-        dateOuverture: dateOuverture,
-        heureOuverture: heureOuverture,
-        dateFin: dateFin,
-        presentes: presentes
-    };
+    formation.votes.push(
+        normalizeVote(
+            {
+                id: getNextVoteId(formation),
+                dateOuverture: dateOuverture,
+                heureOuverture: heureOuverture,
+                dateFin: dateFin,
+                presentes: presentes,
+                reponses: [],
+                creeLe: new Date().toISOString()
+            },
+            formation.votes.length
+        )
+    );
 
-    formation.votes.push(vote);
     saveFormations();
     closeVotePopup();
     alert("Vote cree avec succes pour cette formation.");
 });
 
+function normalizeFormation(formation) {
+    const eleves = Array.isArray(formation.eleves) ? formation.eleves : [];
+    const votes = Array.isArray(formation.votes) ? formation.votes : [];
+
+    return {
+        id: Number(formation.id) || 0,
+        nom: typeof formation.nom === "string" ? formation.nom : "",
+        dateDebut: formation.dateDebut || "",
+        dateFin: formation.dateFin || "",
+        eleves: eleves,
+        votes: votes.map((vote, index) => normalizeVote(vote, index))
+    };
+}
+
+function normalizeVote(vote, index) {
+    const presentes = Array.isArray(vote.presentes)
+        ? vote.presentes
+              .map((value) => Number(value))
+              .filter((value) => Number.isFinite(value))
+        : [];
+
+    return {
+        id: Number(vote.id) || index + 1,
+        dateOuverture: vote.dateOuverture || "",
+        heureOuverture: vote.heureOuverture || "00:00",
+        dateFin: vote.dateFin || vote.dateOuverture || "",
+        presentes: presentes,
+        reponses: Array.isArray(vote.reponses) ? vote.reponses : [],
+        creeLe: vote.creeLe || "",
+        statut: getVoteStatus(
+            vote.dateOuverture || "",
+            vote.heureOuverture || "00:00",
+            vote.dateFin || vote.dateOuverture || ""
+        )
+    };
+}
+
 function saveFormations() {
+    cardList = cardList.map(normalizeFormation);
     localStorage.setItem("formations", JSON.stringify(cardList));
 }
 
-function formatDateFR(dateString) {
-    if (!dateString) return "";
-
-    const morceaux = dateString.split("-");
-    return `${morceaux[2]}/${morceaux[1]}/${morceaux[0]}`;
+function closeFormationPopup() {
+    popupFormationCreate.style.display = "none";
+    formFormationCreate.reset();
+    buttonCreateFormation.textContent = "Creer";
+    editFormationId = null;
 }
 
-function formatHeure(heure) {
-    return heure ? heure.slice(0, 5) : "";
+function closeVotePopup() {
+    popupVoteCreate.style.display = "none";
+    formVoteCreate.reset();
+    votePresentsList.innerHTML = "";
+    voteFormationName.textContent = "";
+    voteFormationId = null;
+}
+
+function renderFormationCards() {
+    const renderedCards = formationDirectory.querySelectorAll(".formation-card");
+    renderedCards.forEach((card) => {
+        card.remove();
+    });
+
+    cardList.forEach((formation) => {
+        formationDirectory.appendChild(createFormationCard(formation));
+    });
+}
+
+function formatDateFR(dateString) {
+    if (!dateString) {
+        return "";
+    }
+
+    const parts = dateString.split("-");
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
 
 function getTodayISO() {
@@ -254,6 +292,31 @@ function getFormationStatus(dateDebut, dateFin) {
     return "status-current";
 }
 
+function getVoteStatus(dateOuverture, heureOuverture, dateFin) {
+    if (!dateOuverture || !dateFin) {
+        return "a_venir";
+    }
+
+    const openingTime = heureOuverture || "00:00";
+    const now = new Date();
+    const start = new Date(`${dateOuverture}T${openingTime}:00`);
+    const end = new Date(`${dateFin}T23:59:59.999`);
+
+    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+        return "a_venir";
+    }
+
+    if (now < start) {
+        return "a_venir";
+    }
+
+    if (now > end) {
+        return "termine";
+    }
+
+    return "ouvert";
+}
+
 function applyFormationCardStatus(card, dateDebut, dateFin) {
     const status = getFormationStatus(dateDebut, dateFin);
 
@@ -284,16 +347,21 @@ function renderVotePresents(formation) {
     const eleves = Array.isArray(formation.eleves) ? formation.eleves : [];
 
     if (eleves.length === 0) {
-        votePresentsList.innerHTML = `<p class="vote-empty">Aucun eleve dans cette formation.</p>`;
+        votePresentsList.innerHTML =
+            '<p class="vote-empty">Aucun eleve dans cette formation.</p>';
         return;
     }
 
-    votePresentsList.innerHTML = eleves.map((eleve) => `
-        <label class="vote-checkbox">
-            <input type="checkbox" value="${eleve.id}" checked>
-            <span>${eleve.prenom} ${eleve.nom} - ${eleve.email}</span>
-        </label>
-    `).join("");
+    votePresentsList.innerHTML = eleves
+        .map((eleve) => {
+            return `
+                <label class="vote-checkbox">
+                    <input type="checkbox" value="${eleve.id}" checked>
+                    <span>${eleve.prenom} ${eleve.nom} - ${eleve.email}</span>
+                </label>
+            `;
+        })
+        .join("");
 }
 
 function openVotePopup(formation) {
@@ -317,29 +385,20 @@ function openVotePopup(formation) {
     formVoteDateOuverture.focus();
 }
 
-function closeVotePopup() {
-    popupVoteCreate.style.display = "none";
-    formVoteCreate.reset();
-    votePresentsList.innerHTML = "";
-    voteFormationName.textContent = "";
-    voteFormationId = null;
-}
-
-function createFormationCard(id, nom, dateDebut, dateFin) {
+function createFormationCard(formation) {
     const card = document.createElement("div");
 
-    card.id = String(id);
-    card.name = nom;
-    card.startDate = dateDebut;
-    card.endDate = dateFin;
-
+    card.id = String(formation.id);
+    card.classList.add("formation-card");
     card.innerHTML = `
-        <p class="card-name">${nom}</p>
-        <p class="card-start-date">${formatDateFR(dateDebut)}</p>
-        <p class="card-end-date">${formatDateFR(dateFin)}</p>
+        <div class="formation-card-body">
+            <p class="card-name">${formation.nom}</p>
+            <p class="card-start-date">${formatDateFR(formation.dateDebut)}</p>
+            <p class="card-end-date">${formatDateFR(formation.dateFin)}</p>
+        </div>
 
         <div class="card-buttons">
-            <button class="btn-view" type="button" aria-label="Voir">
+            <button class="btn-view" type="button" aria-label="Voir les eleves">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
                     <circle cx="12" cy="12" r="2.5"></circle>
@@ -353,6 +412,16 @@ function createFormationCard(id, nom, dateDebut, dateFin) {
                     <path d="M8 14h8"></path>
                     <path d="M8 18h5"></path>
                     <path d="m8.5 10 1.5 1.5 3-3"></path>
+                </svg>
+            </button>
+
+            <button class="btn-votes-page" type="button" aria-label="Voir les votes">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M2 7.5s3.5-4 10-4 10 4 10 4-3.5 4-10 4-10-4-10-4Z"></path>
+                    <circle cx="12" cy="7.5" r="1.6"></circle>
+                    <path d="M6 14h12v6H6z"></path>
+                    <path d="M9 17h6"></path>
+                    <path d="M10.5 12.5v1.5"></path>
                 </svg>
             </button>
 
@@ -372,44 +441,41 @@ function createFormationCard(id, nom, dateDebut, dateFin) {
         </div>
     `;
 
-    applyFormationCardStatus(card, dateDebut, dateFin);
+    applyFormationCardStatus(card, formation.dateDebut, formation.dateFin);
 
-    card.querySelector(".btn-view").addEventListener("click", function () {
-        window.location.href = `eleves.html?id=${encodeURIComponent(id)}`;
+    card.querySelector(".btn-view").addEventListener("click", () => {
+        window.location.href = `eleves.html?id=${encodeURIComponent(formation.id)}`;
     });
 
-    const buttonVoteCard = card.querySelector(".btn-vote");
-    const buttonDeleteCard = card.querySelector(".btn-delete");
-    const buttonModifyCard = card.querySelector(".btn-edit");
+    card.querySelector(".btn-votes-page").addEventListener("click", () => {
+        window.location.href = `votes.html?id=${encodeURIComponent(formation.id)}`;
+    });
 
-    buttonVoteCard.addEventListener("click", () => {
-        const formation = cardList.find((item) => item.id === Number(card.id));
+    card.querySelector(".btn-vote").addEventListener("click", () => {
         openVotePopup(formation);
     });
 
-    buttonDeleteCard.addEventListener("click", () => {
-        if (confirm("Voulez-vous vraiment supprimer cette formation ?")) {
-            card.remove();
-
-            cardList = cardList.filter(function (c) {
-                return c.id !== Number(card.id);
-            });
-
-            saveFormations();
+    card.querySelector(".btn-delete").addEventListener("click", () => {
+        if (!confirm("Voulez-vous vraiment supprimer cette formation ?")) {
+            return;
         }
+
+        cardList = cardList.filter(
+            (item) => Number(item.id) !== Number(formation.id)
+        );
+        saveFormations();
+        renderFormationCards();
     });
 
-    buttonModifyCard.addEventListener("click", () => {
+    card.querySelector(".btn-edit").addEventListener("click", () => {
+        editFormationId = formation.id;
         buttonCreateFormation.textContent = "Modifier";
+        formCreateNom.value = formation.nom;
+        formCreateDateDebut.value = formation.dateDebut;
+        formCreateDateFin.value = formation.dateFin;
         popupFormationCreate.style.display = "block";
         formCreateNom.focus();
-
-        editMode = card;
-
-        formCreateNom.value = card.name;
-        formCreateDateDebut.value = card.startDate;
-        formCreateDateFin.value = card.endDate;
     });
 
-    formationCard.appendChild(card);
+    return card;
 }
