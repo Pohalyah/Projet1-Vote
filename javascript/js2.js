@@ -21,6 +21,11 @@ const buttonCreateEleve = document.getElementById("buttonCreateEleve");
 if (!formation) {
     titre.textContent = "Formation introuvable";
 } else {
+    formation.eleves = Array.isArray(formation.eleves) ? formation.eleves : [];
+    formation.votes = Array.isArray(formation.votes) ? formation.votes : [];
+
+    localStorage.setItem("formations", JSON.stringify(formations));
+
     titre.textContent = formation.nom;
     renderEleves();
 }
@@ -36,7 +41,13 @@ formEleveCreate.addEventListener("submit", (e) => {
 
     const nom = formEleveNom.value.trim();
     const prenom = formElevePrenom.value.trim();
-    const email = formEleveEmail.value.trim();
+    const email = formEleveEmail.value.trim().toLowerCase();
+
+    if (emailDejaUtilise(email)) {
+        alert("Cet email est déjà utilisé pour un élève de cette formation.");
+        formEleveEmail.focus();
+        return;
+    }
 
     if (editEleveId === null) {
         const nouvelEleve = {
@@ -157,5 +168,14 @@ function closeElevePopup() {
     formEleveCreate.reset();
     editEleveId = null;
     buttonCreateEleve.textContent = "Créer";
+}
+
+function emailDejaUtilise(email) {
+    const emailNormalise = email.trim().toLowerCase();
+
+    return formation.eleves.some(eleve =>
+        eleve.email.trim().toLowerCase() === emailNormalise &&
+        String(eleve.id) !== String(editEleveId)
+    );
 }
 

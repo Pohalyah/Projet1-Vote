@@ -18,7 +18,8 @@ let cardList = savedFormations || savedCards || [];
 cardList = cardList.map(function (formation) {
     return {
         ...formation,
-        eleves: Array.isArray(formation.eleves) ? formation.eleves : []
+        eleves: Array.isArray(formation.eleves) ? formation.eleves : [],
+        votes: Array.isArray(formation.votes) ? formation.votes : []
     };
 });
 
@@ -57,7 +58,8 @@ formFormationCreate.addEventListener("submit", (e) => {
             nom: formCreateNom.value,
             dateDebut: formCreateDateDebut.value,
             dateFin: formCreateDateFin.value,
-            eleves: []
+            eleves: [],
+            votes: []
         };
 
         cardList.push(cardObject);
