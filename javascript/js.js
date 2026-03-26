@@ -138,9 +138,13 @@ formVoteCreate.addEventListener("submit", (event) => {
     const dateOuverture = formVoteDateOuverture.value;
     const heureOuverture = formVoteHeureOuverture.value;
     const dateFin = formVoteDateFin.value;
-    const presentes = Array.from(
+    let presentes = Array.from(
         votePresentsList.querySelectorAll('input[type="checkbox"]:checked')
     ).map((input) => Number(input.value));
+
+    if (presentes.length === 0) {
+        presentes = (formation.eleves || []).map((eleve) => Number(eleve.id));
+    }
 
     if (presentes.length < 2) {
         alert("Selectionne au moins 2 eleves presents pour creer le vote.");

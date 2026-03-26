@@ -22,7 +22,16 @@
         <h1 class="page-title">Page d'Accueil</h1>
 
         <button class="topbar-button topbar-button-disabled" type="button" title="Fonctionnalite a venir">Login</button>
+        <button class="topbar-menu-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobileNav">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </header>
+
+    <nav id="mobileNav" class="mobile-nav" aria-label="Navigation mobile">
+        <button class="mobile-nav-link mobile-nav-link-disabled" type="button" title="Fonctionnalite a venir">Login</button>
+    </nav>
 
     <main class="page-main">
         <section class="app-board">
@@ -44,6 +53,8 @@
             </div>
         </section>
     </main>
+
+    <script src="../javascript/mobile-nav.js"></script>
 </body>
 
 </html>

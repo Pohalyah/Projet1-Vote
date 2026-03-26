@@ -23,7 +23,17 @@
         <h1 class="page-title">Mes Formations</h1>
 
         <a class="topbar-button" href="./index.html">Retour a l'accueil</a>
+        <button class="topbar-menu-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobileNav">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </header>
+
+    <nav id="mobileNav" class="mobile-nav" aria-label="Navigation mobile">
+        <a class="mobile-nav-link" href="./index.html">Accueil</a>
+        <a class="mobile-nav-link" href="./formations.html">Mes formations</a>
+    </nav>
 
     <main class="page-main">
         <section class="app-board">
@@ -90,7 +100,7 @@
 
                 <fieldset class="vote-presents">
                     <legend>Eleves presentes</legend>
-                    <p class="form-help">Selectionne au moins 2 eleves presents pour ce vote.</p>
+                    <p class="form-help">Selectionne les eleves presents. Si aucun n'est coche, tous les eleves seront consideres comme presentes.</p>
                     <div id="votePresentsList" class="vote-presents-list"></div>
                 </fieldset>
 
@@ -100,6 +110,7 @@
     </div>
 
     <script src="../javascript/js.js"></script>
+    <script src="../javascript/mobile-nav.js"></script>
 </body>
 
 </html>

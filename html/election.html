@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/css.css">
+    <link rel="icon" href="data:,">
+    <title>BaloLudo - Election du Delegue</title>
+</head>
+
+<body class="page-election">
+    <header class="topbar">
+        <div class="brand">
+            <img src="../img/Logo.png" alt="Logo BaloLudo">
+            <div class="brand-copy">
+                <strong>BaloLudo</strong>
+                <span>Vote en ligne pour ludo</span>
+            </div>
+        </div>
+
+        <h1 class="page-title">Election du Delegue</h1>
+
+        <div aria-hidden="true"></div>
+    </header>
+
+    <main class="page-main">
+        <section class="app-board">
+            <div class="board-surface board-surface-election">
+                <div class="election-layout">
+                    <section class="election-panel">
+                        <div class="election-intro">
+                            <p id="electionKicker" class="election-kicker">Election du delegue</p>
+                            <h2 id="electionTitle" class="election-title">Choisis 2 personnes</h2>
+                            <p id="electionSubtitle" class="election-subtitle"></p>
+                            <p id="electionStatusNote" class="election-status-note"></p>
+                            <p class="election-note">Tu dois choisir exactement 2 personnes differentes parmi les
+                                presentes.</p>
+                        </div>
+
+                        <div id="election-directory" aria-live="polite">
+
+                            <div class="vote-empty-state">
+                                <div>
+                                    <p class="vote-empty-state-title">Test</p>
+                                    <p class="vote-empty-state-note">Test</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="election-actions">
+                            <p id="electionVoteState" class="election-vote-state">0 choix sur 2</p>
+                            <button id="submitElectionVote" class="popup-submit election-submit" type="button"
+                                disabled>Voter</button>
+                        </div>
+
+                        <p id="electionFeedback" class="election-feedback" aria-live="polite"></p>
+                    </section>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="../javascript/election.js"></script>
+</body>
+
+</html>

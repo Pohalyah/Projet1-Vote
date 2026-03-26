@@ -130,7 +130,8 @@ function createVoteCard(vote) {
         vote.heureOuverture,
         vote.dateFin
     );
-    const totalAttendu = vote.presentes.length;
+    const totalPresentes = getEffectivePresentesIds(vote).length;
+    const totalAttendu = getEligibleVotersCount();
     const totalActuel = vote.reponses.length;
 
     card.type = "button";
@@ -145,7 +146,7 @@ function createVoteCard(vote) {
             vote.heureOuverture
         )}</p>
         <p class="vote-card-meta">Fin : ${formatDateFR(vote.dateFin)}</p>
-        <p class="vote-card-meta">Presents : ${totalAttendu}</p>
+        <p class="vote-card-meta">Pr&eacute;sent&eacute;s : ${totalPresentes}</p>
         <p class="vote-card-progress">${totalActuel} vote(s) / ${totalAttendu} attendu(s)</p>
     `;
 
@@ -164,7 +165,7 @@ function openVoteDetailsPopup(vote) {
     );
     const presentes = getPresentesNames(vote);
     const totalActuel = vote.reponses.length;
-    const totalAttendu = vote.presentes.length;
+    const totalAttendu = getEligibleVotersCount();
 
     voteDetailsTitle.textContent = `Vote ${vote.id}`;
     voteDetailsStatus.innerHTML = `
@@ -205,7 +206,7 @@ function closeVoteDetailsPopup() {
 }
 
 function getPresentesNames(vote) {
-    return vote.presentes.map((eleveId) => {
+    return getEffectivePresentesIds(vote).map((eleveId) => {
         const eleve = formation.eleves.find(
             (item) => Number(item.id) === Number(eleveId)
         );
@@ -216,6 +217,18 @@ function getPresentesNames(vote) {
 
         return `${eleve.prenom} ${eleve.nom}`;
     });
+}
+
+function getEffectivePresentesIds(vote) {
+    if (Array.isArray(vote.presentes) && vote.presentes.length > 0) {
+        return vote.presentes;
+    }
+
+    return (formation.eleves || []).map((eleve) => Number(eleve.id));
+}
+
+function getEligibleVotersCount() {
+    return Array.isArray(formation.eleves) ? formation.eleves.length : 0;
 }
 
 function formatDateFR(dateString) {

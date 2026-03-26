@@ -11,6 +11,8 @@
     --board-border: #3b4bdb;
     --popup-shadow: 0 20px 55px rgba(15, 22, 35, 0.22);
     --topbar-bg: #9b8edc;
+    --topbar-fg: #ffffff;
+    --topbar-ornament: rgba(255, 255, 255, 0.95);
     --topbar-button: #314f79;
     --accent: #2db62b;
 }
@@ -40,12 +42,23 @@ body.page-formations {
 }
 
 body.page-votes {
-    --topbar-bg: #d63a33;
-    --accent: #d63a33;
+    --topbar-bg: #6091cb;
+    --topbar-fg: #ffffff;
+    --topbar-ornament: rgba(255, 255, 255, 0.95);
+    --accent: #3f78bf;
+}
+
+body.page-election {
+    --topbar-bg: #6091cb;
+    --topbar-fg: #ffffff;
+    --topbar-ornament: rgba(255, 255, 255, 0.95);
+    --accent: #3f78bf;
 }
 
 body.page-eleves {
-    --topbar-bg: #2aa7be;
+    --topbar-bg: #e0c74c;
+    --topbar-fg: #26344e;
+    --topbar-ornament: rgba(38, 52, 78, 0.85);
     --accent: #21c34b;
 }
 
@@ -76,10 +89,10 @@ img {
     grid-template-columns: minmax(260px, 420px) 1fr minmax(220px, 320px);
     align-items: center;
     gap: 22px;
-    min-height: 112px;
-    padding: 20px 36px;
+    min-height: 0;
+    padding: 10px 25px;
     background: var(--topbar-bg);
-    color: #ffffff;
+    color: var(--topbar-fg);
     box-shadow: 0 10px 26px rgba(22, 28, 45, 0.15);
 }
 
@@ -133,8 +146,8 @@ img {
     width: clamp(34px, 7vw, 74px);
     height: 8px;
     background:
-        radial-gradient(circle, rgba(255, 255, 255, 0.95) 0 2px, transparent 3px),
-        linear-gradient(90deg, transparent 0 12%, rgba(255, 255, 255, 0.95) 12% 88%, transparent 88% 100%);
+        radial-gradient(circle, var(--topbar-ornament) 0 2px, transparent 3px),
+        linear-gradient(90deg, transparent 0 12%, var(--topbar-ornament) 12% 88%, transparent 88% 100%);
     opacity: 0.95;
 }
 
@@ -153,6 +166,11 @@ img {
     font-weight: 700;
     box-shadow: 0 8px 18px rgba(26, 37, 56, 0.18);
     transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.topbar-menu-toggle,
+.mobile-nav {
+    display: none;
 }
 
 .page-formations .topbar-button {
@@ -517,8 +535,9 @@ img {
 }
 
 .formation-heading-label {
-    font-size: 1.4rem;
+    font-size: clamp(1.8rem, 2.9vw, 2.5rem);
     font-weight: 800;
+    line-height: 1.1;
 }
 
 #titreFormation {
@@ -549,6 +568,14 @@ img {
 #votes-directory {
     display: grid;
     grid-template-columns: repeat(4, minmax(220px, 1fr));
+    gap: 24px;
+    align-items: stretch;
+    width: 100%;
+}
+
+#election-directory {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
     gap: 24px;
     align-items: stretch;
     width: 100%;
@@ -722,6 +749,228 @@ img {
     border: 1px solid #d8e0ee;
     color: #2a3347;
     font-weight: 600;
+}
+
+.board-surface-election {
+    width: calc(50% - 18px);
+    max-width: 920px;
+}
+
+.election-layout {
+    width: 100%;
+}
+
+.election-panel {
+    display: grid;
+    gap: 22px;
+}
+
+.election-intro {
+    display: grid;
+    gap: 10px;
+    max-width: 760px;
+}
+
+.election-kicker {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--accent);
+}
+
+.election-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3vw, 2.9rem);
+    color: #27344e;
+}
+
+.election-subtitle,
+.election-note,
+.election-status-note,
+.election-vote-state {
+    color: var(--muted);
+    line-height: 1.4;
+}
+
+.election-note,
+.election-status-note,
+.election-vote-state {
+    font-size: 0.96rem;
+}
+
+.election-status-note {
+    font-weight: 700;
+}
+
+.election-status-open {
+    color: var(--status-live);
+}
+
+.election-status-upcoming {
+    color: #486991;
+}
+
+.election-status-ended {
+    color: var(--danger);
+}
+
+.election-candidate-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 290px;
+    padding: 26px 20px 22px;
+    border: 3px solid var(--card-border);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: var(--card-shadow);
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.election-candidate-card:hover,
+.election-candidate-card:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px rgba(24, 34, 54, 0.16);
+}
+
+.election-candidate-card.is-selected {
+    border-color: #3f78bf;
+    background: #eef5ff;
+}
+
+.election-candidate-card:disabled {
+    cursor: not-allowed;
+    opacity: 0.72;
+    transform: none;
+}
+
+.election-candidate-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    min-width: 34px;
+    min-height: 34px;
+    padding: 6px;
+    border-radius: 999px;
+    background: rgba(63, 120, 191, 0.12);
+    color: #3f78bf;
+    font-size: 0.95rem;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.election-candidate-frame {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 122px;
+    height: 122px;
+    border: 3px solid rgba(49, 79, 121, 0.22);
+    border-radius: 28px;
+    background: linear-gradient(180deg, #ffffff 0%, #f3f8ff 100%);
+    box-shadow: inset 0 0 0 1px rgba(49, 79, 121, 0.06);
+}
+
+.election-candidate-frame svg {
+    width: 58px;
+    height: 58px;
+    stroke: #486991;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.election-candidate-name {
+    display: grid;
+    gap: 4px;
+}
+
+.election-candidate-prenom,
+.election-candidate-nom {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #27344e;
+}
+
+.election-candidate-meta {
+    font-size: 0.92rem;
+    color: var(--muted);
+}
+
+.election-candidate-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #3f78bf;
+    font-weight: 800;
+    font-size: 1.02rem;
+}
+
+.election-candidate-action svg {
+    width: 28px;
+    height: 28px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.election-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+    padding: 18px 22px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: var(--card-shadow);
+}
+
+.election-vote-state {
+    font-weight: 800;
+    color: #27344e;
+}
+
+.election-submit {
+    min-width: 180px;
+}
+
+.election-submit:disabled {
+    background: #aeb9ca;
+    cursor: not-allowed;
+}
+
+.election-submit:disabled:hover,
+.election-submit:disabled:focus-visible {
+    background: #aeb9ca;
+}
+
+.election-feedback {
+    min-height: 24px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #27344e;
+}
+
+.election-feedback.is-success {
+    color: var(--status-live);
+}
+
+.election-feedback.is-error {
+    color: var(--danger);
+}
+
+.election-feedback.is-info {
+    color: #486991;
 }
 
 .eleve-card-actions {
@@ -925,19 +1174,103 @@ img {
     background: #253b5c;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 1280px) {
     .topbar {
-        grid-template-columns: 1fr;
-        justify-items: center;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        min-height: 88px;
+        padding: 8px 88px 8px 14px;
         text-align: center;
+        box-shadow: none;
+    }
+
+    .brand {
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .brand img {
+        width: 46px;
+    }
+
+    .brand-copy {
+        line-height: 1;
+    }
+
+    .brand-copy strong {
+        font-size: 1.7rem;
+    }
+
+    .brand-copy span {
+        display: none;
+    }
+
+    .page-title {
+        width: auto;
+        gap: 0;
+        margin-top: 0;
+        font-size: 1.72rem;
+        font-style: italic;
+        line-height: 1;
+    }
+
+    .page-home .page-title {
+        font-size: 1.45rem;
+        font-style: normal;
+    }
+
+    .page-title::before,
+    .page-title::after {
+        display: none;
     }
 
     .topbar-button {
-        justify-self: center;
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        width: auto;
+        min-width: 118px;
+        max-width: 128px;
+        min-height: 38px;
+        padding: 7px 10px;
+        border: 2px solid rgba(28, 42, 67, 0.34);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.18);
+        box-shadow: none;
+        color: inherit;
+        font-size: 0.84rem;
+        line-height: 1.1;
+        white-space: normal;
+        text-align: center;
+        transform: translateY(-50%);
+    }
+
+    .page-formations .topbar-button {
+        min-height: 38px;
+        padding: 7px 10px;
+        border-radius: 12px;
+        font-size: 0.84rem;
+    }
+
+    .topbar-button::before {
+        content: none;
+    }
+
+    .topbar-button:hover,
+    .topbar-button:focus-visible,
+    .topbar-button-disabled:hover,
+    .topbar-button-disabled:focus-visible {
+        background: rgba(255, 255, 255, 0.24);
+        transform: translateY(-50%);
+        box-shadow: none;
     }
 
     .page-main {
-        padding: 18px;
+        padding: 14px;
     }
 
     .app-board {
@@ -948,7 +1281,8 @@ img {
     }
 
     .board-surface-home,
-    .board-surface-formations {
+    .board-surface-formations,
+    .board-surface-election {
         max-width: none;
         width: 100%;
     }
@@ -961,6 +1295,10 @@ img {
 
     #votes-directory {
         grid-template-columns: repeat(3, minmax(220px, 1fr));
+    }
+
+    #election-directory {
+        grid-template-columns: repeat(2, minmax(220px, 1fr));
     }
 }
 
@@ -988,48 +1326,284 @@ img {
     #votes-directory {
         grid-template-columns: 1fr;
     }
+
+    #election-directory {
+        grid-template-columns: 1fr;
+    }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 760px) {
+    body {
+        background: #102f5c;
+    }
+
     .topbar {
-        padding: 16px;
+        gap: 2px;
+        min-height: 78px;
+        padding: 8px 56px 8px 10px;
+        box-shadow: none;
+    }
+
+    .brand {
+        gap: 10px;
+    }
+
+    .brand img {
+        width: 44px;
+    }
+
+    .brand-copy {
+        line-height: 1;
+    }
+
+    .brand-copy strong {
+        font-size: 1.65rem;
+    }
+
+    .brand-copy span {
+        display: none;
     }
 
     .page-title {
-        gap: 10px;
-        font-size: 1.9rem;
+        width: auto;
+        gap: 0;
+        margin-top: 0;
+        font-size: 1.5rem;
+        font-style: italic;
+        line-height: 1;
+    }
+
+    .page-home .page-title {
+        font-size: 1.3rem;
+        font-style: normal;
     }
 
     .page-title::before,
     .page-title::after {
-        width: 24px;
+        display: none;
+    }
+
+    .topbar-button {
+        right: 8px;
+        top: 50%;
+        width: auto;
+        min-width: 106px;
+        max-width: 114px;
+        min-height: 34px;
+        padding: 6px 8px;
+        border: 2px solid rgba(28, 42, 67, 0.36);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.18);
+        box-shadow: none;
+        color: inherit;
+        font-size: 0.76rem;
+        line-height: 1.05;
+        white-space: normal;
+        text-align: center;
+        transform: translateY(-50%);
+    }
+
+    .page-formations .topbar-button {
+        min-width: 106px;
+        max-width: 114px;
+        min-height: 34px;
+        padding: 6px 8px;
+        border-radius: 10px;
+        font-size: 0.76rem;
+    }
+
+    .topbar-button::before {
+        content: none;
+    }
+
+    .topbar-button:hover,
+    .topbar-button:focus-visible,
+    .topbar-button-disabled:hover,
+    .topbar-button-disabled:focus-visible {
+        background: rgba(255, 255, 255, 0.24);
+        transform: translateY(-50%);
+        box-shadow: none;
+    }
+
+    .page-home .topbar-button {
+        display: none;
+    }
+
+    .page-home .topbar-menu-toggle {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        z-index: 4;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        width: 42px;
+        height: 36px;
+        padding: 0;
+        border: none;
+        background: transparent;
+        color: #0e1421;
+        transform: translateY(-50%);
+    }
+
+    .page-home .topbar-menu-toggle span {
+        display: block;
+        width: 30px;
+        height: 4px;
+        border-radius: 999px;
+        background: currentColor;
+    }
+
+    .page-home .mobile-nav {
+        display: none;
+        position: fixed;
+        top: 86px;
+        right: 10px;
+        z-index: 40;
+        width: min(220px, calc(100vw - 20px));
+        padding: 10px;
+        border: 2px solid rgba(28, 42, 67, 0.18);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.96);
+        box-shadow: 0 14px 30px rgba(24, 34, 54, 0.18);
+    }
+
+    .page-home .mobile-nav.is-open {
+        display: grid;
+        gap: 8px;
+    }
+
+    .page-home .mobile-nav-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 12px;
+        border: 1px solid #c8d3e5;
+        border-radius: 12px;
+        background: linear-gradient(180deg, #f7faff 0%, #edf3fb 100%);
+        color: #1d2d47;
+        font-weight: 800;
+        box-shadow: 0 6px 16px rgba(24, 34, 54, 0.08);
+    }
+
+    .page-home .mobile-nav-link-disabled {
+        cursor: default;
+    }
+
+    .page-election .election-kicker {
+        color: #98d6ff;
+    }
+
+    .page-election .election-title,
+    .page-election .election-subtitle,
+    .page-election .election-note,
+    .page-election .election-status-note,
+    .page-election .election-feedback {
+        color: #f5f9ff;
+    }
+
+    .page-election .election-status-open {
+        color: #86efac;
+    }
+
+    .page-election .election-status-upcoming {
+        color: #cfe3ff;
+    }
+
+    .page-election .election-status-ended {
+        color: #ffb3b3;
+    }
+
+    .page-election .election-feedback.is-success {
+        color: #86efac;
+    }
+
+    .page-election .election-feedback.is-error {
+        color: #ffb3b3;
+    }
+
+    .page-election .election-feedback.is-info {
+        color: #cfe3ff;
     }
 
     .page-main {
-        padding: 14px;
+        padding: 0 8px 18px;
+        background: #102f5c;
     }
 
     .app-board {
-        padding: 14px;
+        min-height: calc(100vh - 100px);
+        padding: 0;
+        border: none;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .board-surface,
+    .board-surface-home,
+    .board-surface-formations,
+    .board-surface-election {
+        width: 100%;
+        max-width: none;
     }
 
     .home-layout,
-    .formations-layout {
-        justify-content: center;
-    }
-
-    #formationCreate,
-    #formation-directory > div,
-    #eleve-directory > div,
-    .partner-card,
-    .home-card {
-        width: min(100%, 100%);
-    }
-
-    #formation-directory,
-    #eleve-directory {
+    .formations-layout,
+    .election-layout {
         width: 100%;
-        grid-template-columns: 1fr;
+    }
+
+    .home-actions {
+        width: 100%;
+        gap: 10px;
+    }
+
+    .home-card {
+        width: 100%;
+        min-height: 56px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 12px;
+        text-align: left;
+    }
+
+    .home-card-title {
+        flex: 1;
+        font-size: 1rem;
+    }
+
+    .home-card-icon,
+    .home-card .add-icon {
+        margin-left: auto;
+        width: 28px;
+        height: 28px;
+        flex: 0 0 28px;
+    }
+
+    .home-card .add-icon {
+        font-size: 1.25rem;
+    }
+
+    .home-card-note {
+        display: none;
+    }
+
+    #formation-directory {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        width: 100%;
+    }
+
+    #eleve-directory {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
     }
 
     #votes-directory {
@@ -1037,12 +1611,112 @@ img {
         grid-template-columns: 1fr;
     }
 
+    #election-directory {
+        width: 100%;
+        grid-template-columns: 1fr;
+    }
+
+    #formationCreate,
+    #formation-directory > div {
+        width: auto;
+        min-height: 132px;
+        padding: 12px 10px 10px;
+        flex: initial;
+    }
+
+    #eleve-directory > div {
+        min-height: 132px;
+        padding: 12px 10px 10px;
+    }
+
+    .card-name {
+        font-size: 0.94rem;
+    }
+
+    .card-start-date,
+    .card-end-date,
+    .card-firstname,
+    .card-subtitle {
+        font-size: 0.8rem;
+    }
+
+    .card-buttons {
+        padding-top: 8px;
+    }
+
+    .card-buttons button {
+        min-height: 24px;
+    }
+
+    .card-buttons svg,
+    .eleve-card-actions svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .formation-card .card-buttons {
+        --formation-actions-gap: 0px;
+        column-gap: 0;
+    }
+
+    .formation-card .card-buttons button + button {
+        border-left: 1px solid rgba(49, 61, 91, 0.14);
+    }
+
+    .formation-card .card-buttons button + button::before {
+        display: none;
+    }
+
     .formation-heading {
         flex-wrap: wrap;
+        gap: 6px;
+        margin: 8px 0 10px;
+    }
+
+    .formation-heading-label,
+    #titreFormation {
+        font-size: 1.05rem;
+        line-height: 1.15;
+    }
+
+    .election-actions {
+        align-items: stretch;
+    }
+
+    .election-submit {
+        width: 100%;
     }
 
     .board-link {
         margin-left: 0;
+        padding: 5px 10px;
+        font-size: 0.78rem;
+    }
+
+    .eleve-card {
+        gap: 8px;
+    }
+
+    .eleve-card .card-name {
+        padding-right: 0;
+        margin-top: 0;
+    }
+
+    .eleve-card-actions {
+        position: static;
+        order: 4;
+        justify-content: center;
+        gap: 0;
+        width: 100%;
+        margin-top: auto;
+        padding-top: 8px;
+        border-top: 1px solid rgba(49, 61, 91, 0.14);
+    }
+
+    .btn-edit-eleve,
+    .btn-delete-eleve {
+        width: 50%;
+        height: 22px;
     }
 
     .popup {
